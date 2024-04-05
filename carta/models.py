@@ -1,3 +1,5 @@
 from django.db import models
 
-# Create your models here.
+class Carta(models.Model):
+    frente = models.TextField(max_length=500)
+    verso = models.TextField(max_length=500)

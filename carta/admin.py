@@ -1,3 +1,4 @@
 from django.contrib import admin
+from carta.models import Carta
 
-# Register your models here.
+admin.site.register(Carta)
