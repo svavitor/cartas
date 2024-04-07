@@ -1,7 +1,8 @@
 from django.urls import path
 
-from . import views
+from .views import *
 
 urlpatterns = [
-    path("", views.CartaAPI.as_view()),    
+    path("", CartaAPI.as_view()),
+    path("<int:card_id>", CartaAPI.as_view()),
 ]
