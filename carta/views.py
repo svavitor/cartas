@@ -9,15 +9,15 @@ class CartaAPI(APIView):
 
     def get_object(self, card_id):
         try:
-           return Carta.objects.get(id=card_id)
+            return Carta.objects.get(id=card_id)
         except Carta.DoesNotExist:
-           return None
+            return None
 
     def get(self, request, *args, **kwargs):
         lista_cartas = Carta.objects.all()
         serializer = CartaSerializer(lista_cartas, many=True)
         return Response(serializer.data)
-    
+
     def post(self, request, *args, **kwargs):
         carta = request.data
         serializer = CartaSerializer(data=carta)
@@ -34,11 +34,7 @@ class CartaAPI(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response({"Parametros errados"}, status=status.HTTP_400_BAD_REQUEST)
-
-        #updated_card = None
-        #try:
-        #    updated_card = Carta.objects.get(id=card_id)
-        #except Carta.DoesNotExist:
-        #    return Response({"res":"Carta não existe"}, status=status.HTTP_400_BAD_REQUEST)
-        #return Response({f"{ card_id } - { request.data }"})
+    
+    #(TODO) Criar uma função para mostrar apenas os reviews do dia atual.
+    #def fuc():
 

@@ -4,4 +4,6 @@ from carta.models import Carta
 class CartaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carta
-        fields = ['frente','verso']
+        fields = ['frente','verso', 'next_review']
+
+
