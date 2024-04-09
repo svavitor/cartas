@@ -5,4 +5,7 @@ from .views import *
 urlpatterns = [
     path("", CartaAPI.as_view()),
     path("<int:card_id>", CartaAPI.as_view()),
+    path("to-review", CardViewSet.as_view({'get':'cards_to_review'})),
 ]
+
+
