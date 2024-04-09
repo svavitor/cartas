@@ -4,6 +4,14 @@ from card.models import Card
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        fields = ['front','back', 'next_review']
+        fields = [
+            'id',
+            'front',
+            'back',
+            'review_count',
+            'review_multiplier',
+            'last_review', 
+            'next_review'
+            ]
 
 

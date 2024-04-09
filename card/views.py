@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
-from datetime import datetime
+from datetime import datetime, timedelta
 from card.models import Card
 from card.serializers import CardSerializer
 
@@ -41,20 +41,52 @@ class CardAPI(APIView):
 
 class CardViewSet(ViewSet):
     
+    def set_last_review_to_now(self, card_id):
+        card = CardAPI.get_object(CardAPI, card_id)
+        new_card = {}
+        new_card['last_review'] = datetime.now()
+        return new_card
+
     def cards_to_review(self, request):
         time_now = datetime.now(tz=pytz.timezone('America/Fortaleza'))
         queryset = Card.objects.all().filter(next_review__lte = time_now)
         cards_count = queryset.count()
         serializer = CardSerializer(queryset, many=True)
-        response = {'count': cards_count, 'cards': serializer.data } 
+        response = { 'count': cards_count, 'cards': serializer.data } 
         return Response(response, status=status.HTTP_200_OK)
     
     def x(self, request, card_id):
-        #(TODO) Create function to change card next_review when the user doesnt remember the card
-        return Response({"x"})
+        card = CardAPI.get_object(CardAPI, card_id)
+        new_card = self.set_last_review_to_now(card_id)
+
+        new_card['next_review'] = new_card['last_review']
+        new_card['review_multiplier'] = card.review_multiplier/2
+
+        if new_card['review_multiplier'] < 1:
+            new_card['review_multiplier'] = 1        
+
+        serializer = CardSerializer(card, data=new_card, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(new_card, status=status.HTTP_200_OK)
     
     def o(self, request, card_id):
-        #(TODO) Create function to change card next_review when the user does remember the card
-        return Response({"o"})
+        card = CardAPI.get_object(CardAPI, card_id)
+        new_card = self.set_last_review_to_now(card_id)
+        
+        new_card['next_review'] = card.next_review + timedelta(minutes=5*card.review_multiplier)
+        
+        new_card['review_multiplier'] = card.review_multiplier + 1
+        
+        serializer = CardSerializer(card, data=new_card, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(new_card, status=status.HTTP_200_OK)
 
 
