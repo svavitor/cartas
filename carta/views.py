@@ -1,3 +1,4 @@
+import pytz
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
@@ -38,15 +39,22 @@ class CartaAPI(APIView):
             return Response(serializer.data)
         return Response({"Parametros errados"}, status=status.HTTP_400_BAD_REQUEST)
 
-#(TODO) Criar uma função para mostrar apenas os reviews do dia atual ou atrasados.
-
 class CardViewSet(ViewSet):
+    
     def cards_to_review(self, request):
-        queryset = Carta.objects.all().filter(next_review__lte = datetime.today())
-        print(queryset)
+        time_now = datetime.now(tz=pytz.timezone('America/Fortaleza'))
+        queryset = Carta.objects.all().filter(next_review__lte = time_now)
+        cards_count = queryset.count()
         serializer = CartaSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
+        response = {'count': cards_count, 'cards': serializer.data } 
+        return Response(response, status=status.HTTP_200_OK)
+    
+    def x():
+        #(TODO) Create function to change card next_review when the user doesnt remember the card
+        pass
+    
+    def o():
+        #(TODO) Create function to change card next_review when the user does remember the card
+        pass
 
 
