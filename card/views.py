@@ -59,6 +59,7 @@ class CardViewSet(ViewSet):
         card = CardAPI.get_object(CardAPI, card_id)
         new_card = self.set_last_review_to_now(card_id)
 
+        new_card['review_count'] = card.review_count+1
         new_card['next_review'] = new_card['last_review']
         new_card['review_multiplier'] = card.review_multiplier/2
 
@@ -76,11 +77,17 @@ class CardViewSet(ViewSet):
     def o(self, request, card_id):
         card = CardAPI.get_object(CardAPI, card_id)
         new_card = self.set_last_review_to_now(card_id)
-        
-        new_card['next_review'] = card.next_review + timedelta(minutes=5*card.review_multiplier)
-        
+
+        new_card['review_count'] = card.review_count+1
+
+        if card.review_multiplier < 3:
+            new_delta = timedelta(minutes=5*card.review_multiplier)
+        else:
+            new_delta = timedelta(days=1*card.review_multiplier)
+
+        new_card['next_review'] = card.next_review + new_delta
         new_card['review_multiplier'] = card.review_multiplier + 1
-        
+
         serializer = CardSerializer(card, data=new_card, partial=True)
 
         if serializer.is_valid():
