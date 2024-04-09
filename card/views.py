@@ -49,12 +49,12 @@ class CardViewSet(ViewSet):
         response = {'count': cards_count, 'cards': serializer.data } 
         return Response(response, status=status.HTTP_200_OK)
     
-    def x():
+    def x(self, request, card_id):
         #(TODO) Create function to change card next_review when the user doesnt remember the card
-        pass
+        return Response({"x"})
     
-    def o():
+    def o(self, request, card_id):
         #(TODO) Create function to change card next_review when the user does remember the card
-        pass
+        return Response({"o"})
 
 
