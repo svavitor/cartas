@@ -18,8 +18,8 @@ class CardAPI(APIView):
             return None
 
     def get(self, request, *args, **kwargs):
-        cards_list = Card.objects.all()
-        serializer = CardSerializer(cards_list, many=True)
+        all_cards = Card.objects.all()
+        serializer = CardSerializer(all_cards, many=True)
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
@@ -88,7 +88,8 @@ class CardViewSet(ViewSet):
         #else:
         #    delta = timedelta(days=1*card.review_multiplier)
 
-        updated_card['next_review'] = card.next_review # + delta
+        delta = timedelta(minutes=5)
+        updated_card['next_review'] = card.next_review + delta
         #updated_card['review_multiplier'] = card.review_multiplier + 1
 
         serializer = CardSerializer(card, data=updated_card, partial=True)
