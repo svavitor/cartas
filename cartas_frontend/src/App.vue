@@ -13,10 +13,32 @@ interface Card {
 }
 
 const cards = ref([] as Card[])
+const current_card = ref()
+const current_card_index = ref(0)
 
 async function loadCards() {
   const listCards = await axios.get<Card[]>('http://127.0.0.1:8081/cards/')
   cards.value = listCards.data
+  current_card.value = cards.value[current_card_index.value]
+}
+function next_card(){
+  if (current_card_index.value < cards.value.length) {
+    current_card_index.value += 1
+    current_card.value = cards.value[current_card_index.value]
+  } else {
+    current_card.value = null
+    console.log('No more cards.')
+  }
+}
+
+function call_x(){
+  next_card()
+  console.log("X")
+}
+
+function call_o(){
+  next_card()
+  console.log("O")
 }
 
 onMounted(async () => {
@@ -26,97 +48,21 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <div v-for="(card, index) in cards" :key="index" class="flip-card">
-      <div class="flip-card-inner">
-        <div class="flip-card-front">
-          <p>{{ card.front }}</p>
-        </div>
-        <div class="flip-card-back">
-          <p>{{ card.back }}</p>
-        </div>
-      </div>
-    </div> 
-  </div>
   <main>
+    <div v-if="current_card">
+      <p>{{ current_card?.front }}</p>
+      <p>{{ current_card?.back }}</p>
+    </div>
 
+    <div v-else="current_card">
+      <p>No more Cards to review.</p>
+    </div>
+
+    <button class="c-button" @click="call_x">X</button>
+    <button class="c-button" @click="call_o">O</button>
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
- /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
- .flip-card {
-  border-radius: 12px;
-  background-color: transparent;
-  width: 300px;
-  height: 200px;
-  /* border: 1px solid #f1f1f1; */
-  perspective: 1000px; /* Remove this if you don't want the 3D effect */
-}
-
-/* This container is needed to position the front and back side */
-.flip-card-inner {
-  border-radius: 12px;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-}
-
-/* Do an horizontal flip when you move the mouse over the flip box container */
-.flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
-}
-
-/* Position the front and back side */
-.flip-card-front, .flip-card-back {
-  position: absolute;
-  border-radius: 12px;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden; /* Safari */
-  backface-visibility: hidden;
-}
-
-/* Style the front side (fallback if image is missing) */
-.flip-card-front {
-  background-color: #bbb;
-  color: black;
-}
-
-/* Style the back side */
-.flip-card-back {
-  background-color: dodgerblue;
-  color: white;
-  transform: rotateY(180deg);
-} 
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>

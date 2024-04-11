@@ -27,7 +27,7 @@ class CardAPI(APIView):
         serializer = CardSerializer(data=new_card)
         if serializer.is_valid(raise_exception=True):
             new_card = serializer.save()
-        return Response({ new_card }, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, card_id, *args, **kwargs):
         params_to_update = request.data
@@ -40,6 +40,7 @@ class CardAPI(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response({"Parametros errados"}, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class CardViewSet(ViewSet):
     
