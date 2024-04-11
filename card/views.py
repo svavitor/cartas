@@ -23,17 +23,19 @@ class CardAPI(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
-        card = request.data
-        serializer = CardSerializer(data=card)
+        new_card = request.data
+        serializer = CardSerializer(data=new_card)
         if serializer.is_valid(raise_exception=True):
-            card_saved = serializer.save()
-        return Response({"Sucesso"})
+            new_card = serializer.save()
+        return Response({ new_card }, status=status.HTTP_201_CREATED)
 
     def patch(self, request, card_id, *args, **kwargs):
-        card_test = self.get_object(card_id)
-        if not card_test:
+        params_to_update = request.data
+        card = self.get_object(card_id)
+        if not card:
             return Response("Objeto não encontrado")
-        serializer = CardSerializer(card_test, data=request.data, partial=True)
+
+        serializer = CardSerializer(card, data=params_to_update, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -43,57 +45,58 @@ class CardViewSet(ViewSet):
     
     def set_last_review_to_now(self, card_id):
         card = CardAPI.get_object(CardAPI, card_id)
-        new_card = {}
-        new_card['last_review'] = datetime.now()
-        return new_card
+        updated_card = {}
+        updated_card['last_review'] = datetime.now()
+        return updated_card
 
-    def cards_to_review(self, request):
+    def cards_to_review_today(self, request):
         time_now = datetime.now(tz=pytz.timezone('America/Fortaleza'))
-        queryset = Card.objects.all().filter(next_review__lte = time_now)
-        cards_count = queryset.count()
-        serializer = CardSerializer(queryset, many=True)
+        cards_for_today = Card.objects.all().filter(next_review__lte = time_now)
+        cards_count = cards_for_today.count()
+        serializer = CardSerializer(cards_for_today, many=True)
         response = { 'count': cards_count, 'cards': serializer.data } 
         return Response(response, status=status.HTTP_200_OK)
     
     def x(self, request, card_id):
         card = CardAPI.get_object(CardAPI, card_id)
-        new_card = self.set_last_review_to_now(card_id)
+        updated_card = self.set_last_review_to_now(card_id)
+        updated_card['review_count'] = card.review_count+1
 
-        new_card['review_count'] = card.review_count+1
-        new_card['next_review'] = new_card['last_review']
-        new_card['review_multiplier'] = card.review_multiplier/2
+        delta = timedelta(minutes=2)
+        updated_card['next_review'] = updated_card['last_review'] + delta
+        #updated_card['review_multiplier'] = card.review_multiplier/2
 
-        if new_card['review_multiplier'] < 1:
-            new_card['review_multiplier'] = 1        
+        #if updated_card['review_multiplier'] < 1:
+        #    updated_card['review_multiplier'] = 1        
 
-        serializer = CardSerializer(card, data=new_card, partial=True)
+        serializer = CardSerializer(card, data=updated_card, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-        return Response(new_card, status=status.HTTP_200_OK)
+        return Response(updated_card, status=status.HTTP_200_OK)
     
     def o(self, request, card_id):
         card = CardAPI.get_object(CardAPI, card_id)
-        new_card = self.set_last_review_to_now(card_id)
+        updated_card = self.set_last_review_to_now(card_id)
 
-        new_card['review_count'] = card.review_count+1
+        updated_card['review_count'] = card.review_count+1
 
-        if card.review_multiplier < 3:
-            new_delta = timedelta(minutes=5*card.review_multiplier)
-        else:
-            new_delta = timedelta(days=1*card.review_multiplier)
+        #if card.review_multiplier < 3:
+        #    delta = timedelta(minutes=5*card.review_multiplier)
+        #else:
+        #    delta = timedelta(days=1*card.review_multiplier)
 
-        new_card['next_review'] = card.next_review + new_delta
-        new_card['review_multiplier'] = card.review_multiplier + 1
+        updated_card['next_review'] = card.next_review # + delta
+        #updated_card['review_multiplier'] = card.review_multiplier + 1
 
-        serializer = CardSerializer(card, data=new_card, partial=True)
+        serializer = CardSerializer(card, data=updated_card, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-        return Response(new_card, status=status.HTTP_200_OK)
+        return Response(updated_card, status=status.HTTP_200_OK)
 
 
