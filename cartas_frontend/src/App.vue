@@ -49,12 +49,14 @@ onMounted(async () => {
 
 <template>
   <main>
-    <div v-if="current_card">
+    <p>Cards to review: {{ cards.length - current_card_index }}</p>
+
+    <div class="current_card" v-if="current_card">
       <p>{{ current_card?.front }}</p>
       <p>{{ current_card?.back }}</p>
     </div>
 
-    <div v-else="current_card">
+    <div class="current_card" v-else="current_card">
       <p>No more Cards to review.</p>
     </div>
 
@@ -64,5 +66,20 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
+.current_card {
+  background-color: rgb(75, 54, 37);
+  border: solid 1px rgb(3, 3, 3);
+  height: 300px;
+  width: 230px;
+  margin: 5px;
+  padding-top: 50px;
+  text-align: center;
+}
+
+button {
+  width: 110px;
+  margin: 5px;
+}
 
 </style>
