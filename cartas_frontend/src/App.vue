@@ -9,18 +9,20 @@ interface Card {
   review_multiplier: number,
   last_review: any,
   next_review: any
-
 }
 
 const cards = ref([] as Card[])
 const current_card = ref()
 const current_card_index = ref(0)
+const front_text= ref('')
+const back_text= ref('')
 
 async function loadCards() {
   const listCards = await axios.get<Card[]>('http://127.0.0.1:8081/cards/')
   cards.value = listCards.data
   current_card.value = cards.value[current_card_index.value]
 }
+
 function next_card(){
   if (current_card_index.value < cards.value.length) {
     current_card_index.value += 1
@@ -41,6 +43,19 @@ function call_o(){
   console.log("O")
 }
 
+async function create_card(){
+  await axios.post('http://127.0.0.1:8081/cards/', {
+    front: front_text.value,
+    back: back_text.value
+  })
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.error('Erro ao criar carta:', error)
+      })
+}
+
 onMounted(async () => {
   await loadCards()  
 })
@@ -59,26 +74,37 @@ onMounted(async () => {
     <div class="current_card" v-else="current_card">
       <p>No more Cards to review.</p>
     </div>
-
     <button class="c-button" @click="call_x">X</button>
     <button class="c-button" @click="call_o">O</button>
+
+    <hr> <br>
+    
+    <label>Front: </label> <br>
+    <textarea v-model="front_text" rows="4" cols="50"> </textarea> <br>
+
+    <label>Back: </label> <br>
+    <textarea v-model="back_text" rows="4" cols="50"> </textarea> <br>
+
+    <button class="c-button" @click="create_card">Criar carta</button>
+
   </main>
 </template>
 
 <style scoped>
 
 .current_card {
-  background-color: rgb(75, 54, 37);
+  background-color: rgb(180, 178, 177);
   border: solid 1px rgb(3, 3, 3);
-  height: 300px;
-  width: 230px;
+  height: 500px;
+  width: 600px;
   margin: 5px;
-  padding-top: 50px;
+  padding: 50px 20px 20px 20px;
+
   text-align: center;
 }
 
 button {
-  width: 110px;
+  width: 316px;
   margin: 5px;
 }
 
