@@ -52,7 +52,8 @@ function toggle_card(){
 async function create_card(){
   await axios.post('http://127.0.0.1:8081/cards/', {
     front: front_text.value,
-    back: back_text.value
+    back: back_text.value,
+    deck: 1
   })
       .then(response => {
         console.log(response.data)
@@ -77,6 +78,8 @@ onMounted(async () => {
         <p>{{ current_card?.front }}</p>
       </div>
       <div class="back" v-if="!card_div">
+        <p>{{ current_card?.front }}</p>
+        <hr>
         <p>{{ current_card?.back }}</p>
       </div>
     </div>

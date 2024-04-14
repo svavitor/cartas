@@ -9,5 +9,3 @@ urlpatterns = [
     path("x/<int:card_id>", CardViewSet.as_view({'post':'x'})),
     path("o/<int:card_id>", CardViewSet.as_view({'post':'o'})),
 ]
-
-

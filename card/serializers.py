@@ -11,7 +11,6 @@ class CardSerializer(serializers.ModelSerializer):
             'review_count',
             'review_multiplier',
             'last_review', 
-            'next_review'
+            'next_review',
+            'deck'
             ]
-
-
