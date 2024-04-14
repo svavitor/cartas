@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import ListCards from './ListCards.vue';
 
 interface Deck {
     id:number,
@@ -10,6 +11,7 @@ interface Deck {
 
 const decks = ref([] as Deck[])
 const new_deck_name = ref('')
+const selected_deck = ref(1)
 
 async function load_decks() {
     const list_decks = await axios.get<Deck[]>('http://127.0.0.1:8081/decks/')
@@ -28,6 +30,10 @@ async function create_deck(){
       })
 }
 
+function set_selected_deck(deck_id: number){
+    selected_deck.value = deck_id
+}
+
 onMounted(async () => {
   await load_decks()  
 })
@@ -37,7 +43,7 @@ onMounted(async () => {
 <template>
   <main>
     <div class="decks">
-      <div class="deck" v-for="deck in decks" :key="deck.id">
+      <div class="deck" v-for="deck in decks" :key="deck.id" @click="set_selected_deck(deck.id)">
         <p>{{ deck.name }} - {{ deck.card_count }}</p>
       </div>
     </div>
@@ -48,6 +54,8 @@ onMounted(async () => {
     <input type="text" v-model="new_deck_name"> <br>
     <button class="c-button" @click="create_deck">Criar Deck</button>
 
+    <hr>
+    <ListCards :deck_id="selected_deck"></ListCards>
   </main>
 </template>
 

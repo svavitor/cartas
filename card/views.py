@@ -44,6 +44,11 @@ class CardAPI(APIView):
 
 class CardViewSet(ViewSet):
     
+    def get_cards_by_deck(self, request, deck_id):
+        cards = Card.objects.filter(deck__id=deck_id)
+        serializer = CardSerializer(cards, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def set_last_review_to_now(self, card_id):
         card = CardAPI.get_object(CardAPI, card_id)
         updated_card = {}
