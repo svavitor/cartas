@@ -6,5 +6,6 @@ class DeckSerializer(serializers.ModelSerializer):
         model = Deck
         fields = [
             'id',
-            'name'
+            'name',
+            'card_count'
             ]

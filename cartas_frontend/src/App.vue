@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import ListDecks from './components/ListDecks.vue';
+import { hasJSDocParameterTags } from 'typescript';
 
 interface Card {
   front: string,
@@ -99,7 +101,9 @@ onMounted(async () => {
     <textarea v-model="back_text" rows="4" cols="50"> </textarea> <br>
 
     <button class="c-button" @click="create_card">Criar carta</button>
-
+     
+    <hr>
+    <ListDecks></ListDecks>
   </main>
 </template>
 
