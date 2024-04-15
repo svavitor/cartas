@@ -17,22 +17,21 @@ const current_card = ref()
 const current_card_index = ref(0)
 const front_text = ref('')
 const back_text = ref('')
-const card_div = ref(true)
+const is_answer_visible = ref(false)
 
-async function loadCards() {
-  const listCards = await axios.get<Card[]>('http://127.0.0.1:8081/cards/by-deck/'+ props.deck_id)
-  cards.value = listCards.data
+async function load_cards() {
+  const cards_by_deck = await axios.get<Card[]>('http://127.0.0.1:8081/cards/by-deck/'+ props.deck_id)
+  cards.value = cards_by_deck.data
   current_card.value = cards.value[current_card_index.value]
 }
 
 function next_card(){
-  card_div.value = true
+    is_answer_visible.value = false
   if (current_card_index.value < cards.value.length) {
     current_card_index.value += 1
     current_card.value = cards.value[current_card_index.value]
   } else {
     current_card.value = null
-    console.log('No more cards.')
   }
 }
 
@@ -46,15 +45,15 @@ function call_o(){
   console.log("O")
 }
 
-function toggle_card(){
-  card_div.value = !card_div.value
+function toggle_answer(){
+    is_answer_visible.value = !is_answer_visible.value
 }
 
 async function create_card(){
   await axios.post('http://127.0.0.1:8081/cards/', {
     front: front_text.value,
     back: back_text.value,
-    deck: 1
+    deck: props.deck_id
   })
       .then(response => {
         console.log(response.data)
@@ -64,10 +63,10 @@ async function create_card(){
       })
 }
 
-watch(props, async (new_deck_id) => { await loadCards() })
+watch(props, async () => { await load_cards() })
 
 onMounted(async () => {
-  await loadCards()  
+  await load_cards()  
 })
 
 </script>
@@ -76,11 +75,11 @@ onMounted(async () => {
   <main>
     <p>Cards to review: {{ cards.length - current_card_index }}</p>
 
-    <div class="current_card" v-if="current_card" @click="toggle_card">
-      <div class="front" v-if="card_div">
+    <div class="current_card" v-if="current_card" @click="toggle_answer">
+      <div class="front" v-if="!is_answer_visible">
         <p>{{ current_card?.front }}</p>
       </div>
-      <div class="back" v-if="!card_div">
+      <div class="back" v-if="is_answer_visible">
         <p>{{ current_card?.front }}</p>
         <hr>
         <p>{{ current_card?.back }}</p>
@@ -115,7 +114,6 @@ onMounted(async () => {
   width: 600px;
   margin: 5px;
   padding: 50px 20px 20px 20px;
-
   text-align: center;
 }
 
