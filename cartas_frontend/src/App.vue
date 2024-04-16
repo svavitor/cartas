@@ -23,8 +23,12 @@ import ListDecks from './components/ListDecks.vue';
 }
 
 button {
-  width: 316px;
+  width: 120px;
   margin: 5px;
 }
+
+body { 
+  font-family: 'Roboto', sans-serif; 
+} 
 
 </style>

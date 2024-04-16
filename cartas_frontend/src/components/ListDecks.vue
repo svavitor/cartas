@@ -12,6 +12,8 @@ interface Deck {
 const decks = ref([] as Deck[])
 const new_deck_name = ref('')
 const selected_deck = ref(1)
+const menu_screen = ref(true)
+const review_screen = ref(false)
 
 async function load_decks() {
     const list_decks = await axios.get<Deck[]>('http://127.0.0.1:8081/decks/')
@@ -32,6 +34,13 @@ async function create_deck(){
 
 function set_selected_deck(deck_id: number){
     selected_deck.value = deck_id
+    review_screen.value = true
+    menu_screen.value = false
+}
+
+function return_to_menu() {
+    review_screen.value = false
+    menu_screen.value = true
 }
 
 onMounted(async () => {
@@ -41,7 +50,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
+  <main v-if="menu_screen">
     <div class="decks">
       <div class="deck" v-for="deck in decks" :key="deck.id" @click="set_selected_deck(deck.id)">
         <p>{{ deck.name }} - {{ deck.card_count }}</p>
@@ -55,27 +64,38 @@ onMounted(async () => {
     <button class="c-button" @click="create_deck">Criar Deck</button>
 
     <hr>
-    <ListCards :deck_id="selected_deck"></ListCards>
   </main>
+  <ListCards v-if="review_screen" :deck_id="selected_deck"></ListCards>
+  <button class="c-button" @click="return_to_menu">Voltar</button>
 </template>
 
 <style scoped>
 
 .decks {
-  background-color: rgb(34, 34, 34);
-  border: solid 1px rgb(3, 3, 3);
-  height: 500px;
-  width: 600px;
-  margin: 5px;
-  padding: 50px 20px 20px 20px;
-  text-align: center;
+    background-color: rgb(245, 245, 245);
+    border: solid 1px rgb(3, 3, 3);
+    box-shadow: 4px 4px rgb(150, 150, 150);
+    height: 500px;
+    width: 600px;
+    margin: 5px;
+    padding: 50px 20px 20px 20px;
+    text-align: center;
 }
 
 .deck {
-    background-color: rgb(54, 140, 151);
-    height: 30px;
-    border-radius: 2px;
+    box-shadow: 4px 4px rgb(150, 150, 150);
+    background-color: rgb(245, 245, 245);
+    border: solid 1px rgb(3, 3, 3);
+    border-radius: 0px;
     width: auto;
+    height: 30px;
+    margin: 6px;
+    line-height: 1px;
+}
+
+.deck:hover {
+    background-color: rgb(231, 231, 231);
+    cursor: pointer;
 }
 
 button {

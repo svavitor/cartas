@@ -5,7 +5,9 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from datetime import datetime, timedelta
 from card.models import Card
+from deck.models import Deck
 from card.serializers import CardSerializer
+from deck.serializers import DeckSerializer
 
 class CardAPI(APIView):
     serializer_class = CardSerializer
@@ -24,6 +26,17 @@ class CardAPI(APIView):
 
     def post(self, request, *args, **kwargs):
         new_card = request.data
+        deck_id = new_card['deck']
+
+        deck = Deck.objects.get(id=deck_id)
+        update_deck = {}
+        update_deck['card_count'] = deck.card_count+1
+
+        serializer_deck = DeckSerializer(deck, data=update_deck, partial=True)
+
+        if serializer_deck.is_valid(raise_exception=True):
+            update_deck = serializer_deck.save()
+
         serializer = CardSerializer(data=new_card)
         if serializer.is_valid(raise_exception=True):
             new_card = serializer.save()

@@ -72,10 +72,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
-    <p>Cards to review: {{ cards.length - current_card_index }}</p>
-
+    <main>
     <div class="current_card" v-if="current_card" @click="toggle_answer">
+        <button class="edit_card" @click.stop="">Editar</button>
       <div class="front" v-if="!is_answer_visible">
         <p>{{ current_card?.front }}</p>
       </div>
@@ -92,6 +91,7 @@ onMounted(async () => {
     <button class="c-button" @click="call_x">X</button>
     <button class="c-button" @click="call_o">O</button>
 
+    <p>Cards to review: {{ cards.length - current_card_index }}</p>
     <hr> <br>
 
     <label>Front: </label> <br>
@@ -107,19 +107,39 @@ onMounted(async () => {
 
 <style scoped>
 
+.edit_card {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 30px;
+    width: 50px;
+}
+
 .current_card {
-  background-color: rgb(180, 178, 177);
-  border: solid 1px rgb(3, 3, 3);
-  height: 500px;
-  width: 600px;
-  margin: 5px;
-  padding: 50px 20px 20px 20px;
-  text-align: center;
+    position: relative;
+    background-color: rgb(245, 245, 245);
+    border: solid 1px rgb(3, 3, 3);
+    box-shadow: 4px 4px rgb(150, 150, 150);
+    height: 500px;
+    width: 600px;
+    margin: 5px;
+    padding: 50px 20px 20px 20px;
+    text-align: center;
 }
 
 button {
-  width: 316px;
-  margin: 5px;
+    box-shadow: 4px 4px rgb(150, 150, 150);
+    background-color: rgb(245, 245, 245);
+    border: solid 1px rgb(3, 3, 3);
+    border-radius: 0px;
+    width: 316px;
+    height: 30px;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: rgb(231, 231, 231);
+    cursor: pointer;
 }
 
 </style>
