@@ -28,7 +28,7 @@ async function create_deck(){
         console.log(response.data)
       })
       .catch(error => {
-        console.error('Erro ao criar Deck:', error)
+        console.error('Error creating new Deck:', error)
       })
 }
 
@@ -61,12 +61,12 @@ onMounted(async () => {
 
     <label>Name: </label> <br>
     <input type="text" v-model="new_deck_name"> <br>
-    <button class="c-button" @click="create_deck">Criar Deck</button>
+    <button class="c-button" @click="create_deck">Create Deck</button>
 
     <hr>
   </main>
   <ListCards v-if="review_screen" :deck_id="selected_deck"></ListCards>
-  <button class="c-button" @click="return_to_menu">Voltar</button>
+  <button class="c-button" @click="return_to_menu">Deck Menu</button>
 </template>
 
 <style scoped>

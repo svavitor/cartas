@@ -59,7 +59,7 @@ async function create_card(){
         console.log(response.data)
       })
       .catch(error => {
-        console.error('Erro ao criar carta:', error)
+        console.error('Error creating new Card:', error)
       })
 }
 
@@ -74,7 +74,7 @@ onMounted(async () => {
 <template>
     <main>
     <div class="current_card" v-if="current_card" @click="toggle_answer">
-        <button class="edit_card" @click.stop="">Editar</button>
+        <button class="edit_card" @click.stop="">Edit</button>
       <div class="front" v-if="!is_answer_visible">
         <p>{{ current_card?.front }}</p>
       </div>
@@ -100,7 +100,7 @@ onMounted(async () => {
     <label>Back: </label> <br>
     <textarea v-model="back_text" rows="4" cols="50"> </textarea> <br>
 
-    <button class="c-button" @click="create_card">Criar carta</button>
+    <button class="c-button" @click="create_card">Create Card</button>
 
   </main>
 </template>
