@@ -18,11 +18,12 @@ const current_card_index = ref(0)
 const front_text = ref('')
 const back_text = ref('')
 const is_answer_visible = ref(false)
+const edit_modal = ref()
 
 async function load_cards() {
-  const cards_by_deck = await axios.get<Card[]>('http://127.0.0.1:8081/cards/by-deck/'+ props.deck_id)
-  cards.value = cards_by_deck.data
-  current_card.value = cards.value[current_card_index.value]
+    const cards_by_deck = await axios.get<Card[]>('http://127.0.0.1:8081/cards/by-deck/'+ props.deck_id)
+    cards.value = cards_by_deck.data
+    current_card.value = cards.value[current_card_index.value]
 }
 
 function next_card(){
@@ -33,6 +34,14 @@ function next_card(){
   } else {
     current_card.value = null
   }
+}
+
+function open_edit_modal(){
+    edit_modal.value.showModal()
+}
+
+function close_edit_modal(){
+    edit_modal.value.close()
 }
 
 function call_x(){
@@ -74,7 +83,7 @@ onMounted(async () => {
 <template>
     <main>
     <div class="current_card" v-if="current_card" @click="toggle_answer">
-        <button class="edit_card" @click.stop="">Edit</button>
+        <button class="edit_card" @click.stop="open_edit_modal">Edit</button>
       <div class="front" v-if="!is_answer_visible">
         <p>{{ current_card?.front }}</p>
       </div>
@@ -94,15 +103,20 @@ onMounted(async () => {
     <p>Cards to review: {{ cards.length - current_card_index }}</p>
     <hr> <br>
 
-    <label>Front: </label> <br>
-    <textarea v-model="front_text" rows="4" cols="50"> </textarea> <br>
-
-    <label>Back: </label> <br>
-    <textarea v-model="back_text" rows="4" cols="50"> </textarea> <br>
-
-    <button class="c-button" @click="create_card">Create Card</button>
-
   </main>
+
+
+    <dialog class="edit-modal" ref="edit_modal">
+        <button class="close-edit-card"  @click="close_edit_modal">X</button>
+        <label>Front: </label> <br>
+        <textarea v-model="front_text" rows="4" cols="50"> </textarea> <br>
+
+        <label>Back: </label> <br>
+        <textarea v-model="back_text" rows="4" cols="50"> </textarea> <br>
+
+        <button class="b-create-card" @click="create_card">Create Card</button>
+
+    </dialog>
 </template>
 
 <style scoped>
@@ -113,6 +127,18 @@ onMounted(async () => {
     right: 10px;
     height: 30px;
     width: 50px;
+}
+.close-edit-card{
+    position: absolute;
+    top:2px;
+    right: 2px;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+}
+
+.b-create-card{
+    width: 98%;
 }
 
 .current_card {
