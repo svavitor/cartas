@@ -51,11 +51,14 @@ onMounted(async () => {
 
 <template>
   <main v-if="menu_screen">
+
     <div class="decks">
       <div class="deck" v-for="deck in decks" :key="deck.id" @click="set_selected_deck(deck.id)">
         <p>{{ deck.name }} - {{ deck.card_count }}</p>
       </div>
+      <div v-if="decks.length < 1">No decks.</div>
     </div>
+
 
     <hr> <br>
 
